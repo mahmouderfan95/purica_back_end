@@ -5,6 +5,7 @@ use \App\Http\Controllers\Admin\AuthController;
 use \App\Http\Controllers\Admin\CategoryController;
 use \App\Http\Controllers\Admin\RolePermissionController;
 use \App\Http\Controllers\Admin\SettingController;
+use \App\Http\Controllers\Admin\BrandController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,21 @@ Route::group(['middleware' => ['auth:adminApi']], function () {
         Route::delete('/{id}/delete',[CategoryController::class,'destroy']);
         #change status
         Route::post('/{id}/change-status',[CategoryController::class,'changeStatus']);
+    });
+    #brands
+    Route::group(['prefix' => 'brands'],function(){
+        #get all categories
+        Route::get('/',[BrandController::class,'index']);
+        #store category
+        Route::post('/',[BrandController::class,'store']);
+        #show category details
+        Route::get('/{id}',[BrandController::class,'show']);
+        #update category route
+        Route::post('/{id}/update',[BrandController::class,'update']);
+        #delete category
+        Route::delete('/{id}/delete',[BrandController::class,'destroy']);
+        #change status
+        Route::post('/{id}/change-status',[BrandController::class,'changeStatus']);
     });
     //////////////////////////// Role And Permissions //////////////////////////////////////
     Route::group(['prefix' => 'roles'],function(){
