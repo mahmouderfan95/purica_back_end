@@ -6,6 +6,7 @@ use \App\Http\Controllers\Admin\CategoryController;
 use \App\Http\Controllers\Admin\RolePermissionController;
 use \App\Http\Controllers\Admin\SettingController;
 use \App\Http\Controllers\Admin\BrandController;
+use \App\Http\Controllers\Admin\SliderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,21 @@ Route::group(['middleware' => ['auth:adminApi']], function () {
         Route::delete('/{id}/delete',[BrandController::class,'destroy']);
         #change status
         Route::post('/{id}/change-status',[BrandController::class,'changeStatus']);
+    });
+    #sliders
+    Route::group(['prefix' => 'sliders'],function(){
+        #get all categories
+        Route::get('/',[SliderController::class,'index']);
+        #store category
+        Route::post('/',[SliderController::class,'store']);
+        #show category details
+        Route::get('/{id}',[SliderController::class,'show']);
+        #update category route
+        Route::post('/{id}/update',[SliderController::class,'update']);
+        #delete category
+        Route::delete('/{id}/delete',[SliderController::class,'destroy']);
+        #change status
+        Route::post('/{id}/change-status',[SliderController::class,'changeStatus']);
     });
     //////////////////////////// Role And Permissions //////////////////////////////////////
     Route::group(['prefix' => 'roles'],function(){
