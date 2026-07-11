@@ -3,6 +3,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Admin\AuthController;
 use \App\Http\Controllers\Admin\CategoryController;
+use \App\Http\Controllers\Admin\RolePermissionController;
+use \App\Http\Controllers\Admin\SettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,5 +38,27 @@ Route::group(['middleware' => ['auth:adminApi']], function () {
         Route::delete('/{id}/delete',[CategoryController::class,'destroy']);
         #change status
         Route::post('/{id}/change-status',[CategoryController::class,'changeStatus']);
+    });
+    //////////////////////////// Role And Permissions //////////////////////////////////////
+    Route::group(['prefix' => 'roles'],function(){
+        #get all roles
+        Route::get('/',[RolePermissionController::class,'index']);
+        #add role
+        Route::post('/',[RolePermissionController::class,'store']);
+        #show role
+        Route::get('/{id}',[RolePermissionController::class,'show']);
+        #update role
+        Route::post('/{id}/update',[RolePermissionController::class,'update']);
+        #delete role
+        Route::delete('/{id}/destroy',[RolePermissionController::class,'destroy']);
+        #get permissions
+    });
+    Route::get('get-permissions',[RolePermissionController::class,'getPermissions']);
+    #settings
+    Route::group(['prefix' => 'settings'],function(){
+        #setting route api
+        Route::get('/',[SettingController::class,'index']);
+        #update
+        Route::post('update',[SettingController::class,'update']);
     });
 });

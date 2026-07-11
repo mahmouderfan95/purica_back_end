@@ -10,6 +10,7 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
+        "spatie/laravel-permission": "^6.25",
         "spatie/laravel-translatable": "^6.11"
     },
     "require-dev": {
@@ -31,7 +32,10 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "app/Helper/General.php"
+        ]
     },
     "scripts": {
         "post-autoload-dump": [
