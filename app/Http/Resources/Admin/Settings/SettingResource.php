@@ -21,6 +21,7 @@ class SettingResource extends JsonResource
             'site_logo' => $this->SiteLogoUrl,
             'site_address' => $this->site_address,
             'site_phone' => $this->site_phone,
+            'site_video' => $this->site_video,
             'whatsapp' => $this->whatsapp,
             'facebook' => $this->facebook,
             'tiktok' => $this->tiktok,

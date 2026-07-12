@@ -14,6 +14,7 @@ class Setting extends Model
         'site_logo',
         'site_address',
         'site_phone',
+        'site_video',
         'whatsapp',
         'facebook',
         'tiktok',

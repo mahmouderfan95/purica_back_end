@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Front\AuthController;
 use App\Http\Controllers\Front\ForgetPasswordController;
+use App\Http\Controllers\Front\HomepageController;
+use App\Http\Controllers\Front\CategoryController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -29,3 +31,9 @@ Route::group(['prefix' => 'auth'], function () {
     #reset password
     Route::post('/reset-password', [ForgetPasswordController::class,'resetPassword']);
 });
+    #homepage api
+    Route::get('homepage',[HomePageController::class, 'index']);
+    #get categories
+    Route::get('categories',[CategoryController::class, 'index']);
+    #get products by category
+    Route::get('categories/{id}',[CategoryController::class,'show']);

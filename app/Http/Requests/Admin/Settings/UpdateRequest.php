@@ -27,6 +27,7 @@ class UpdateRequest extends FormRequest
             'site_logo' => 'sometimes|image|mimes:jpg,jpeg,png,webp|max:2048',
             'site_address' => 'sometimes|string',
             'site_phone' => 'sometimes|string',
+            'site_video' => 'sometimes|string',
             'whatsapp' => 'sometimes|string',
             'facebook' => 'sometimes|string',
             'tiktok' => 'sometimes|string',

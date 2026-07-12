@@ -2,6 +2,7 @@
 namespace App\Services\Admin;
 use App\Helper\FileUpload;
 use App\Http\Resources\Admin\Settings\SettingResource;
+use App\Models\Setting;
 use App\Repositories\Admin\SettingRepository;
 use App\Traits\ApiResponseAble;
 use Illuminate\Http\JsonResponse;
@@ -42,6 +43,7 @@ class SettingService
                 'site_logo' => $data['site_logo'] ?? $setting->site_logo,
                 'site_address' => $request->site_address,
                 'site_phone' => $request->site_phone,
+                'site_video' => $request->site_video,
                 'whatsapp' => $request->whatsapp,
                 'facebook' => $request->facebook,
                 'tiktok' => $request->tiktok,
