@@ -8,6 +8,8 @@ use \App\Http\Controllers\Admin\SettingController;
 use \App\Http\Controllers\Admin\BrandController;
 use \App\Http\Controllers\Admin\SliderController;
 use \App\Http\Controllers\Admin\AttributeController;
+use \App\Http\Controllers\Admin\AttributeOptionController;
+use \App\Http\Controllers\Admin\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,6 +86,30 @@ Route::group(['middleware' => ['auth:adminApi']], function () {
         Route::post('/{id}/update',[AttributeController::class,'update']);
         #delete category
         Route::delete('/{id}/delete',[AttributeController::class,'destroy']);
+    });
+    #attribute options
+    Route::group(['prefix' => 'attribute-options'],function(){
+        Route::get('/{id}',[AttributeOptionController::class,'index']);
+        #store category
+        Route::post('/',[AttributeOptionController::class,'store']);
+        #show category details
+        Route::get('/{id}/details',[AttributeOptionController::class,'show']);
+        #update category route
+        Route::post('/{id}/update',[AttributeOptionController::class,'update']);
+        #delete category
+        Route::delete('/{id}/delete',[AttributeOptionController::class,'destroy']);
+    });
+    #products
+    Route::group(['prefix' => 'products'],function(){
+        Route::get('/',[ProductController::class,'index']);
+        #store category
+        Route::post('/',[ProductController::class,'store']);
+        #show category details
+        Route::get('/{id}',[ProductController::class,'show']);
+        #update category route
+        Route::post('/{id}/update',[ProductController::class,'update']);
+        #delete category
+        Route::delete('/{id}/delete',[ProductController::class,'destroy']);
     });
     //////////////////////////// Role And Permissions //////////////////////////////////////
     Route::group(['prefix' => 'roles'],function(){

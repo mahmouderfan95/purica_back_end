@@ -1,26 +1,26 @@
 <?php
 namespace App\Services\Admin;
-use App\Http\Resources\Admin\Attributes\AttributeCollection;
-use App\Http\Resources\Admin\Attributes\AttributeResource;
-use App\Repositories\Admin\AttributeRepository;
+use App\Http\Resources\Admin\AttributeOptions\AttributeOptionCollection;
+use App\Http\Resources\Admin\AttributeOptions\AttributeOptionResource;
+use App\Repositories\Admin\AttributeOptionRepository;
 use App\Traits\ApiResponseAble;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
-class AttributeService
+class AttributeOptionService
 {
     use ApiResponseAble;
-    public function __construct(public AttributeRepository $repository){}
-    public function index($request) : JsonResponse
+    public function __construct(public AttributeOptionRepository $attributeOptionRepository){}
+    public function index($request,$id) : JsonResponse
     {
         try{
-            $attributes = $this->repository->getAttributes($request);
+            $attributes = $this->attributeOptionRepository->getAttributeOptions($request,$id);
             if(!$attributes->isEmpty()){
-                return $this->ApiSuccessResponse(AttributeCollection::make($attributes));
+                return $this->ApiSuccessResponse(AttributeOptionCollection::make($attributes));
             }
             return $this->listResponse([]);
         }catch (\Exception $exception){
-            Log::error('error of get all attributes' . $exception->getMessage());
+            Log::error('error of get all attribute options' . $exception->getMessage());
             return $this->ApiErrorResponse([],'something went wrong');
         }
     }
@@ -29,27 +29,28 @@ class AttributeService
         try{
             $data = $request->validated();
             // Create the attribute
-            $attribute = $this->repository->store([
+            $attribute = $this->attributeOptionRepository->store([
                 'name' => $data['name'],
-                'type' => $data['type'],
                 'status' => $data['status'],
+                'value' => $data['value'] ?? null,
+                'attribute_id' => $data['attribute_id'],
             ]);
             if($attribute)
-                return $this->ApiSuccessResponse(new AttributeResource($attribute),'success message');
+                return $this->ApiSuccessResponse(new AttributeOptionResource($attribute),'success message');
         }catch (\Exception $exception){
-            Log::error('error of store attribute' . $exception->getMessage());
+            Log::error('error of store attribute options' . $exception->getMessage());
             return $this->ApiErrorResponse([], 'something went wrong');
         }
     }
     public function show($id) : JsonResponse
     {
         try{
-            $attribute = $this->repository->getModelById($id);
+            $attribute = $this->attributeOptionRepository->getModelById($id);
             if(!$attribute)
                 return $this->notFoundResponse();
-            return $this->ApiSuccessResponse(AttributeResource::make($attribute),'success message');
+            return $this->ApiSuccessResponse(AttributeOptionResource::make($attribute),'success message');
         }catch (\Exception $exception){
-            Log::error('error of get attribute ' . $exception->getMessage());
+            Log::error('error of get attribute options ' . $exception->getMessage());
             return $this->ApiErrorResponse([], 'something went wrong');
         }
     }
@@ -60,7 +61,7 @@ class AttributeService
             $data = $request->validated();
 
             // Find the package by ID
-            $attribute = $this->repository->getModelById($id);
+            $attribute = $this->attributeOptionRepository->getModelById($id);
             if (!$attribute) {
                 return $this->notFoundResponse();
             }
@@ -68,26 +69,27 @@ class AttributeService
             $attribute->update([
                 'name' => $data['name'] ?? $attribute['name'],
                 'status' => $data['status'] ?? $attribute['status'],
-                'type' => $data['type'] ?? $attribute['type'],
+                'value' => $data['value'] ?? $attribute['value'],
+                'attribute_id' => $data['attribute_id'] ?? $attribute['attribute_id'],
             ]);
-            return $this->ApiSuccessResponse(new AttributeResource($attribute), 'Attribute updated successfully.');
+            return $this->ApiSuccessResponse(new AttributeOptionResource($attribute), 'Attribute option updated successfully.');
         }catch (\Exception $exception){
-            Log::error('error of update attribute ' . $exception->getMessage());
+            Log::error('error of update attribute option ' . $exception->getMessage());
             return $this->ApiErrorResponse([],'something went wrong');
         }
     }
     public function destroy($id) : JsonResponse
     {
         try{
-            $attribute = $this->repository->getModelById($id);
+            $attribute = $this->attributeOptionRepository->getModelById($id);
             if ($attribute) {
                 // Delete the package
                 $attribute->delete();
-                return $this->ApiSuccessResponse([],'attribute deleted successfully');
+                return $this->ApiSuccessResponse([],'attribute option deleted successfully');
             }
             return $this->notFoundResponse();
         }catch (\Exception $exception){
-            Log::error('error of delete attribute ' . $exception->getMessage());
+            Log::error('error of delete attribute option ' . $exception->getMessage());
             return $this->ApiErrorResponse([],'something went wrong');
         }
     }
