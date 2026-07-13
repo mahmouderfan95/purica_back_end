@@ -6,6 +6,7 @@ use App\Http\Controllers\Front\AuthController;
 use App\Http\Controllers\Front\ForgetPasswordController;
 use App\Http\Controllers\Front\HomepageController;
 use App\Http\Controllers\Front\CategoryController;
+use App\Http\Controllers\Front\ProductController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -37,3 +38,11 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('categories',[CategoryController::class, 'index']);
     #get products by category
     Route::get('categories/{id}',[CategoryController::class,'show']);
+    #products
+    Route::group(['prefix' => 'products'], function () {
+        #offers page
+        Route::get('offers',[ProductController::class,'offers']);
+        #product details by slug
+        Route::get('{slug}',[ProductController::class,'show']);
+        #get product variant price by sku
+    });

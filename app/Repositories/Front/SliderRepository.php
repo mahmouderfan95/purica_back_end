@@ -14,6 +14,13 @@ class SliderRepository
             ->take(4)
             ->get();
     }
+    public function getSliderReviewsPage($slug)
+    {
+        return $this->getModel()::query()
+            ->select('id', 'title', 'status','image','url','type','position','page_slug')
+            ->Page($slug)
+            ->first();
+    }
     private function getModel() : Slider
     {
         return new Slider();
