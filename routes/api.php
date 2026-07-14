@@ -7,6 +7,8 @@ use App\Http\Controllers\Front\ForgetPasswordController;
 use App\Http\Controllers\Front\HomepageController;
 use App\Http\Controllers\Front\CategoryController;
 use App\Http\Controllers\Front\ProductController;
+use App\Http\Controllers\Front\FavoriteController;
+use App\Http\Controllers\Front\CartController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -45,4 +47,21 @@ Route::group(['prefix' => 'auth'], function () {
         #product details by slug
         Route::get('{slug}',[ProductController::class,'show']);
         #get product variant price by sku
+    });
+    Route::prefix('favorites')->group(function () {
+
+        Route::get('/', [FavoriteController::class, 'index']);
+
+        Route::post('/', [FavoriteController::class, 'store'])->middleware('guest.token');
+
+    });
+
+    #cart route api
+    Route::group(['prefix' => 'cart'],function(){
+        #toggle product in cart
+        Route::post('/', [CartController::class, 'store'])->middleware('guest.token');
+        #get cart list
+        Route::get('/', [CartController::class, 'index']);
+        #delete product from cart
+        Route::delete('/{item_id}/delete', [CartController::class, 'destroy']);
     });

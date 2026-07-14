@@ -25,7 +25,7 @@ class Product extends Model
         'category_id',
         'brand_id',
     ];
-//    protected $appends = ['is_fav'];
+    protected $appends = ['is_fav'];
     public function category() : BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');
@@ -50,25 +50,20 @@ class Product extends Model
 //    {
 //        return $this->hasMany(Rating::class,'product_id');
 //    }
-//    public function favoredByUsers(): BelongsToMany
-//    {
-//        return $this->belongsToMany(
-//            User::class,
-//            'user_product_whitelists',
-//            'product_id',
-//            'user_id',
-//        )->withTimestamps();
-//    }
-//    public function getIsFavAttribute()
-//    {
-//        $user = auth('api')->user();
-//
-//        if (!$user) {
-//            return false;
-//        }
-//
-//        return $user->favorites()->where('product_id', $this->id)->exists();
-//    }
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(UserProductWhitelists::class, 'product_id');
+    }
+    public function getIsFavAttribute()
+    {
+        $user = auth('api')->user();
+
+        if (!$user) {
+            return false;
+        }
+
+        return $user->favorites()->where('product_id', $this->id)->exists();
+    }
 //    public function averageRating(): float
 //    {
 //        return round($this->ratings()->avg('rating'), 1) ?? 0.0;
