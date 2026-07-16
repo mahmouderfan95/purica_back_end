@@ -9,6 +9,7 @@ use App\Http\Controllers\Front\CategoryController;
 use App\Http\Controllers\Front\ProductController;
 use App\Http\Controllers\Front\FavoriteController;
 use App\Http\Controllers\Front\CartController;
+use App\Http\Controllers\Front\OrderController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -64,4 +65,18 @@ Route::group(['prefix' => 'auth'], function () {
         Route::get('/', [CartController::class, 'index']);
         #delete product from cart
         Route::delete('/{item_id}/delete', [CartController::class, 'destroy']);
+    });
+
+    Route::group(['middleware' => 'auth:api','throttle:api'],function(){
+        #orders
+        Route::group(['prefix' => 'orders'],function(){
+            #store order
+            Route::post('/', [OrderController::class, 'store']);
+            #get all orders
+            Route::get('/', [OrderController::class, 'index']);
+            #order details
+            Route::get('/{id}',[OrderController::class, 'show']);
+            #cancel order
+            Route::post('/cancel', [OrderController::class, 'cancel']);
+        });
     });

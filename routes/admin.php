@@ -10,6 +10,11 @@ use \App\Http\Controllers\Admin\SliderController;
 use \App\Http\Controllers\Admin\AttributeController;
 use \App\Http\Controllers\Admin\AttributeOptionController;
 use \App\Http\Controllers\Admin\ProductController;
+use \App\Http\Controllers\Admin\CountryController;
+use \App\Http\Controllers\Admin\CityController;
+use \App\Http\Controllers\Admin\RegionController;
+use \App\Http\Controllers\Admin\ShippingCompanyController;
+use \App\Http\Controllers\Admin\ShippingPriceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +26,12 @@ use \App\Http\Controllers\Admin\ProductController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+#get shipping companies
+Route::get('get-shipping-companies',[ShippingCompanyController::class, 'getShippingCompanies']);
+#get Cities
+Route::get('get-cities', [CityController::class, 'getCities']);
+#get areas by city_id
+Route::get('get-regions/{city_id}',[RegionController::class, 'getRegions']);
 #auth
 Route::prefix('auth')->group(function () {
     #login request
@@ -132,5 +143,60 @@ Route::group(['middleware' => ['auth:adminApi']], function () {
         Route::get('/',[SettingController::class,'index']);
         #update
         Route::post('update',[SettingController::class,'update']);
+    });
+    #countries
+    Route::group(['prefix' => 'countries'],function(){
+        #get all countries
+        Route::get('/',[CountryController::class,'index']);
+        #add new country
+        Route::post('/',[CountryController::class,'store']);
+        #update
+        Route::post('/{id}/update',[CountryController::class,'update']);
+        #delete country
+        Route::delete('/{id}/destroy',[CountryController::class,'destroy']);
+    });
+    #cities
+    Route::group(['prefix' => 'cities'],function(){
+        #get all cities
+        Route::get('/',[CityController::class,'index']);
+        #add new city
+        Route::post('/',[CityController::class,'store']);
+        #update
+        Route::post('/{id}/update',[CityController::class,'update']);
+        #delete city
+        Route::delete('/{id}/destroy',[CityController::class,'destroy']);
+    });
+    #areas
+    Route::group(['prefix' => 'regions'],function(){
+        #get all cities
+        Route::get('/',[RegionController::class,'index']);
+        #add new city
+        Route::post('/',[RegionController::class,'store']);
+        #update
+        Route::post('/{id}/update',[RegionController::class,'update']);
+        #delete city
+        Route::delete('/{id}/destroy',[RegionController::class,'destroy']);
+    });
+    #shipping companies
+    Route::group(['prefix' => 'shipping-companies'],function(){
+        #get all cities
+        Route::get('/',[ShippingCompanycontroller::class,'index']);
+        #add new city
+        Route::post('/',[ShippingCompanycontroller::class,'store']);
+        #update
+        Route::post('/{id}/update',[ShippingCompanycontroller::class,'update']);
+        #delete city
+        Route::delete('/{id}/destroy',[ShippingCompanycontroller::class,'destroy']);
+    });
+    #shipping prices
+    Route::group(['prefix' => 'shipping-prices'],function(){
+        #get all cities
+        Route::get('/',[ShippingPriceController::class,'index']);
+        #add new city
+        Route::post('/',[ShippingPriceController::class,'store']);
+        #update
+        Route::post('/{id}/update',[ShippingPriceController::class,'update']);
+        #delete city
+        Route::delete('/{id}/destroy',[ShippingPriceController::class,'destroy']);
     });
 });
