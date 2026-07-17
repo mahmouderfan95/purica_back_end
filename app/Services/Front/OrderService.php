@@ -1,6 +1,15 @@
 <?php
 namespace App\Services\Front;
+use App\Enums\OrderStatusEnum;
+use App\Http\Resources\Admin\Orders\OrderCollection;
+use App\Http\Resources\Front\Orders\OrderResource;
+use App\Models\Country;
+use App\Repositories\Admin\CountryRepository;
+use App\Repositories\Front\CartRepository;
+use App\Repositories\Front\CouponRepository;
 use App\Repositories\Front\OrderRepository;
+use App\Repositories\Front\UserRepository;
+use App\Services\Payment\PaymentContext;
 use App\Traits\ApiResponseAble;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -9,7 +18,13 @@ use Illuminate\Support\Facades\Log;
 class OrderService
 {
     use ApiResponseAble;
-    public function __construct(public OrderRepository $orderRepository){}
+    public function __construct(
+        public OrderRepository $orderRepository,
+        public CartRepository $cartRepository,
+        public CouponRepository $couponRepository,
+        public UserRepository $userRepository,
+        public PaymentContext $paymentContext,
+    ){}
     public function index($request) : JsonResponse
     {
         try{
@@ -26,10 +41,7 @@ class OrderService
     {
         $egypt  = Country::query()->first();
         $user = auth('api')->user();
-
-        $cart = Cart::with('items.product')
-            ->where('user_id', $user->id)
-            ->first();
+        $cart = $this->cartRepository->getCartByUserId($user->id);
 
         if (!$cart || $cart->items->count() === 0) {
             return $this->ApiErrorResponse([],'السلة فارغة', 400);
@@ -37,117 +49,51 @@ class OrderService
 
         DB::beginTransaction();
         try {
-            $conversionImage = null;
-            if ($request->hasFile('conversion_image')) {
-                $conversionImage = $this->save_file(
-                    $request->file('conversion_image'),
-                    'orders'
-                );
-            }
             // -----------------------------------------
             // 2) Handle Coupon / Promo Code (Senior Way)
             // -----------------------------------------
-            $discountValue = 0;
-            $coupon = null;
-
-            if ($request->filled('coupon_code')) {
-
-                $coupon = $this->couponRepository->findValidCoupon($request->coupon_code);
-
-                if (!$coupon) {
-                    return $this->ApiErrorResponse([], 'الكوبون منتهى الصلاحية', 400);
-                }
-
-                // Check usage limit
-                if ($coupon->usage_limit !== null && $coupon->used_count >= $coupon->usage_limit) {
-                    return $this->ApiErrorResponse([], 'تم تجاوز الحد الاقصى من الكوبون', 400);
-                }
-
-                // Check minimum order total
-                if ($coupon->min_order_total && $cart->total < $coupon->min_order_total) {
-                    return $this->ApiErrorResponse([], 'اجمالى الطلب اقل من الحد الادنى المطلوب لاستخدام للكوبون', 400);
-                }
-
-                // Apply discount
-                $discountValue = $coupon->value;
-            }
+            $couponData = $this->couponRepository->validateCoupon(
+                $request->coupon_code,
+                $cart->total
+            );
+            $coupon = $couponData['coupon'];
+            $discountValue = $couponData['discount'];
             // Apply final total after discount
             $finalTotal = max(0, $cart->total - $discountValue + $request->shipping_cost);
-            $order = Order::query()->create([
-                'user_id'        => $user->id,
-                'total'          => $finalTotal,
-                'payment_type' => $request->payment_type ?? 'cod',
-                'address'        => $request->address,
-                'notes'          => $request->notes,
-                'status'         => 'pending',
-                'country_id'     => $egypt->id,
-                'city_id'        => $request->city_id,
-//                'region_id'      => $request->region_id,
-                'wallet_number'   => $request->wallet_number ?? null,
-                'conversion_image' => $conversionImage,
-                'discount'         => $discountValue,
-                'coupon_id'      => $coupon?->id,
-                'shipping_company_id' => $request->shipping_company_id ?? null,
-                'shipping_cost' => $request->shipping_cost ?? null,
-                'addition_type' => 'from_customer',
-                'client_name' => $request->name,
-                'client_phone' => $request->phone,
-            ]);
-            foreach ($cart->items as $item) {
-                $variant = ProductVariant::query()
-                    ->where('product_id', $item->product_id)
-                    ->where('selected_options', $item->selected_options)
-                    ->lockForUpdate()
-                    ->first();
-
-                if (!$variant) {
-                    return $this->ApiErrorResponse([],'Product variant not found',400);
-                }
-
-                if ($variant->available_quantity < $item['quantity']) {
-                    return $this->ApiErrorResponse([],trans('general.Insufficient_stock_product'),400);
-                }
-
-                $variant->available_quantity -= $item->quantity;
-                $variant->save();
-                OrderItem::query()->create([
-                    'order_id'        => $order->id,
-                    'product_id'      => $item->product_id,
-                    'quantity'        => $item->quantity,
-                    'price'           => $item->price,
-                    'total'           => $item->total,
-                    'selected_options'=> $item->selected_options,
-                ]);
-            }
+            #create order
+            $order = $this->orderRepository->createOrder(
+                user: $user,
+                request: $request,
+                country: $egypt,
+                finalTotal: $finalTotal,
+                discountValue: $discountValue,
+                coupon: $coupon,
+            );
+            #create order items
+            $this->orderRepository->processOrderItems($order,$cart);
+            #decrese stock
+            $this->orderRepository->decreaseStock($cart);
             // ----------------------------
             // 5) Increase coupon usage
             // ----------------------------
-            if ($coupon) {
-                $coupon = Coupon::query()
-                    ->where('id', $coupon->id)
-                    ->lockForUpdate()
-                    ->first();
-
-                if ($coupon->usage_limit !== null && $coupon->used_count >= $coupon->usage_limit) {
-                    return $this->ApiErrorResponse([], 'Coupon usage limit exceeded', 400);
-                }
-                $coupon->increment('used_count');
-            }
-            $cart->items()->delete();
-            $cart->update(['total' => 0]);
-            $exists = User::query()
-                ->where('phone', $request->phone)
-                ->where('id', '!=', $user->id)
-                ->exists();
-
-            if (!$exists) {
-                $user->update([
-                    'name'  => $request->name,
-                    'phone' => $request->phone,
-                ]);
-            }
+            $this->couponRepository->updateCouponUsage($coupon);
+            #clear cart
+            $this->cartRepository->clearCart($cart);
+            $this->userRepository->syncCustomerInformation($user,$request);
+            #payment
+            $result = $this->paymentContext->handle(
+                $request->payment_type,
+                $cart,
+                $order
+            );
             DB::commit();
-            return $this->ApiSuccessResponse(OrderResource::make($order->load('items','city','region')),'Order created successfully');
+            return $this->ApiSuccessResponse(
+                [
+                    'order'=>OrderResource::make($order->load('items','city','region')),
+                    'payment'=>$result
+                ],
+                'Order created successfully'
+            );
         }catch (\Exception $e) {
             DB::rollBack();
             Log::error('error of create order' . $e->getMessage());

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Front\Orders\CancelOrderRequest;
 use App\Http\Requests\Front\Orders\StoreRequest;
 use App\Services\Front\OrderService;
 use Illuminate\Http\JsonResponse;

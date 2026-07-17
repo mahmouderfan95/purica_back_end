@@ -68,6 +68,20 @@ class CartRepository
             ]
         );
     }
+    public function getCartByUserId($id)
+    {
+        return  $this->getModel()::query()->with('items.product')
+            ->where('user_id', $id)
+            ->first();
+    }
+    public function clearCart(Cart $cart): void
+    {
+        $cart->items()->delete();
+
+        $cart->update([
+            'total' => 0,
+        ]);
+    }
     private function getModel() : Cart
     {
         return new Cart();
