@@ -21,16 +21,13 @@ class Order extends Model
         'country_id',
         'city_id',
         'region_id',
-//        'shipping_company_id',
-//        'shipping_cost',
+        'shipping_company_id',
+        'shipping_cost',
         'created_by',
-//        'wallet_number',
-//        'conversion_image',
-//        'discount',
-//        'coupon_id',
+        'discount',
+        'coupon_id',
         'cancel_reason',
         'cancelled_at',
-//        'wallet_provider_id',
         'addition_type',
 //        'client_name',
 //        'client_phone',
@@ -55,16 +52,16 @@ class Order extends Model
     {
         return $this->belongsTo(Region::class, 'region_id');
     }
-//    public function shippingCompany() : BelongsTo
-//    {
-//        return $this->belongsTo(ShippingCompany::class, 'shipping_company_id');
-//    }
+    public function shippingCompany() : BelongsTo
+    {
+        return $this->belongsTo(ShippingCompany::class, 'shipping_company_id');
+    }
     public function createdBy() : BelongsTo
     {
         return $this->belongsTo(Admin::class, 'created_by');
     }
-//    public function coupon() : BelongsTo
-//    {
-//        return $this->belongsTo(Coupon::class, 'coupon_id');
-//    }
+    public function coupon() : BelongsTo
+    {
+        return $this->belongsTo(Coupon::class, 'coupon_id');
+    }
 }

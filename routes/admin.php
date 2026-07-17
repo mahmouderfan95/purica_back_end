@@ -15,6 +15,7 @@ use \App\Http\Controllers\Admin\CityController;
 use \App\Http\Controllers\Admin\RegionController;
 use \App\Http\Controllers\Admin\ShippingCompanyController;
 use \App\Http\Controllers\Admin\ShippingPriceController;
+use \App\Http\Controllers\Admin\CouponController;
 
 /*
 |--------------------------------------------------------------------------
@@ -198,5 +199,16 @@ Route::group(['middleware' => ['auth:adminApi']], function () {
         Route::post('/{id}/update',[ShippingPriceController::class,'update']);
         #delete city
         Route::delete('/{id}/destroy',[ShippingPriceController::class,'destroy']);
+    });
+    #coupons
+    Route::group(['prefix' => 'coupons'],function(){
+        #get all cities
+        Route::get('/',[CouponController::class,'index']);
+        #add new city
+        Route::post('/',[CouponController::class,'store']);
+        #update
+        Route::post('/{id}/update',[CouponController::class,'update']);
+        #delete city
+        Route::delete('/{id}/destroy',[CouponController::class,'destroy']);
     });
 });
