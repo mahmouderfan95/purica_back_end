@@ -16,6 +16,7 @@ use \App\Http\Controllers\Admin\RegionController;
 use \App\Http\Controllers\Admin\ShippingCompanyController;
 use \App\Http\Controllers\Admin\ShippingPriceController;
 use \App\Http\Controllers\Admin\CouponController;
+use \App\Http\Controllers\Admin\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -210,5 +211,25 @@ Route::group(['middleware' => ['auth:adminApi']], function () {
         Route::post('/{id}/update',[CouponController::class,'update']);
         #delete city
         Route::delete('/{id}/destroy',[CouponController::class,'destroy']);
+    });
+    #orders
+    Route::group(['prefix' => 'orders'],function(){
+        Route::get('/',[OrderController::class,'index']);
+        #store order
+        Route::post('/',[OrderController::class,'store']);
+        #get order details
+        Route::get('/{id}',[OrderController::class,'show']);
+        #update order
+        Route::post('/{id}/update',[OrderController::class,'update']);
+        #assign shipping
+        Route::post('/{id}/assign-shipping',[OrderController::class,'assignShipping']);
+        #update order status
+        Route::post('/{id}/update-status',[OrderController::class,'updateStatus']);
+        #delete order
+        Route::delete('/{id}/destroy',[OrderController::class,'destroy']);
+        #bulk assign shipping
+        Route::post('bulk-assign-shipping',[OrderController::class,'bulkAssignShipping']);
+        #delete item from order
+        Route::delete('/{id}/delete-item/{orderItemId}',[OrderController::class,'deleteItem']);
     });
 });

@@ -2,6 +2,7 @@
 namespace App\Services\Front;
 use App\Enums\GeneralStatusEnum;
 use App\Http\Resources\Front\Auth\AuthResource;
+use App\Http\Resources\Front\Users\UserResource;
 use App\Models\User;
 use App\Repositories\Front\AuthRepository;
 use App\Repositories\Front\CartRepository;
@@ -80,6 +81,46 @@ class AuthService
             DB::rollBack();
             Log::error('error for login request' . $exception->getMessage());
             return $this->ApiErrorResponse([],'something went wrong',500);
+        }
+    }
+    public function logout($request) : JsonResponse
+    {
+        $user = auth('api')->user();
+
+        $request->user()->currentAccessToken()->delete();
+
+        return $this->ApiSuccessResponse([],'Logged out successfully');
+    }
+    public function profile() : JsonResponse
+    {
+        try{
+            $user = auth('api')->user();
+            return $this->ApiSuccessResponse(UserResource::make($user),'user profile data');
+        }catch (\Exception $exception)
+        {
+            Log::error('error of get profile' . $exception->getMessage());
+            return $this->ApiErrorResponse([],'Something went wrong');
+        }
+    }
+    public function updateProfile($request) : JsonResponse
+    {
+        try{
+            $user = auth('api')->user();
+            $data = $request->validated();
+            if (isset($data['password'])) {
+                $data['password'] = Hash::make($data['password']);
+            }
+            $user->update([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'phone' => $data['phone'],
+//                'address' => $data['address'],
+            ]);
+            return $this->ApiSuccessResponse(UserResource::make($user),'user update profile data');
+        }catch (\Exception $exception)
+        {
+            Log::error('error of update profile' . $exception->getMessage());
+            return $this->ApiErrorResponse([],'Something went wrong');
         }
     }
 }

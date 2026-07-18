@@ -68,6 +68,14 @@ Route::group(['prefix' => 'auth'], function () {
     });
 
     Route::group(['middleware' => 'auth:api','throttle:api'],function(){
+        Route::group(['prefix' => 'auth'], function () {
+            #logout api
+            Route::post('logout',[AuthController::class, 'logout']);
+            #get profile
+            Route::get('profile',[AuthController::class, 'profile']);
+            #update profile
+            Route::post('profile/update',[AuthController::class, 'update']);
+        });
         #orders
         Route::group(['prefix' => 'orders'],function(){
             #store order
