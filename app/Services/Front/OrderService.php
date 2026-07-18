@@ -94,10 +94,11 @@ class OrderService
                 ],
                 'Order created successfully'
             );
-        }catch (\Exception $e) {
+        } catch (\Throwable $e) {
+
             DB::rollBack();
-            Log::error('error of create order' . $e->getMessage());
-            return $this->ApiErrorResponse([],'something went wrong',500);
+
+            throw $e;
         }
     }
     public function show($id) : JsonResponse

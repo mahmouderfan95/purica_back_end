@@ -2,6 +2,7 @@
 namespace App\Repositories\Front;
 use App\Enums\AdditionTypeEnum;
 use App\Enums\OrderStatusEnum;
+use App\Exceptions\BusinessException;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Country;
@@ -89,10 +90,13 @@ class OrderRepository
 
 
             if (!$variant) {
-                throw new \RuntimeException('Product variant not found.');
+                throw new BusinessException('Product variant not found.');
             }
             if ($variant->available_quantity < $item->quantity) {
-                throw new \RuntimeException(trans('general.Insufficient_stock_product'));
+                throw new BusinessException(
+                    trans('general.Insufficient_stock_product'),
+                    422
+                );
             }
 
             $variant->decrement('available_quantity', $item->quantity);
