@@ -12,6 +12,7 @@ use App\Http\Controllers\Front\CartController;
 use App\Http\Controllers\Front\OrderController;
 use App\Http\Controllers\Front\RatingController;
 use App\Http\Controllers\Front\InfluencerEvaluationController;
+use App\Http\Controllers\Front\CouponController;
 /*
 |--------------------------------------------------------------------------
 | API Routes

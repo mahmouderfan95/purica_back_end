@@ -4,7 +4,7 @@ use App\Models\Coupon;
 
 class CouponRepository
 {
-    private function findValidCoupon($code)
+    public function findValidCoupon($code)
     {
         return $this->getModel()::query()
             ->where('code', $code)
