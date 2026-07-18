@@ -17,6 +17,7 @@ use \App\Http\Controllers\Admin\ShippingCompanyController;
 use \App\Http\Controllers\Admin\ShippingPriceController;
 use \App\Http\Controllers\Admin\CouponController;
 use \App\Http\Controllers\Admin\OrderController;
+use \App\Http\Controllers\Admin\InfluencerEvaluationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -231,5 +232,18 @@ Route::group(['middleware' => ['auth:adminApi']], function () {
         Route::post('bulk-assign-shipping',[OrderController::class,'bulkAssignShipping']);
         #delete item from order
         Route::delete('/{id}/delete-item/{orderItemId}',[OrderController::class,'deleteItem']);
+    });
+    #reviews
+    Route::group(['prefix' => 'influencer-evaluations'],function(){
+        #get all reviews
+        Route::get('/',[InfluencerEvaluationController::class,'index']);
+        #store
+        Route::post('/',[InfluencerEvaluationController::class,'store']);
+        #show
+        Route::get('/{id}',[InfluencerEvaluationController::class,'show']);
+        #update
+        Route::post('/{id}/update',[InfluencerEvaluationController::class,'update']);
+        #delete
+        Route::delete('/{id}/destroy',[InfluencerEvaluationController::class,'destroy']);
     });
 });

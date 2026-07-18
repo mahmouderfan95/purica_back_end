@@ -10,6 +10,8 @@ use App\Http\Controllers\Front\ProductController;
 use App\Http\Controllers\Front\FavoriteController;
 use App\Http\Controllers\Front\CartController;
 use App\Http\Controllers\Front\OrderController;
+use App\Http\Controllers\Front\RatingController;
+use App\Http\Controllers\Front\InfluencerEvaluationController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -62,11 +64,18 @@ Route::group(['prefix' => 'auth'], function () {
         #toggle product in cart
         Route::post('/', [CartController::class, 'store'])->middleware('guest.token');
         #get cart list
-        Route::get('/', [CartController::class, 'index']);
+        Route::get('/', [CartController::class, 'index'])->middleware('guest.token');
         #delete product from cart
-        Route::delete('/{item_id}/delete', [CartController::class, 'destroy']);
+        Route::delete('/{item_id}/delete', [CartController::class, 'destroy'])->middleware('guest.token');
     });
-
+    #get coupon value by code
+    Route::get('get-valid-coupon/{code}',[CouponController::class, 'getValidCoupon']);
+    #check value by coupon code
+    Route::get('get-coupon-value/{code}/{cartTotal}',[CouponController::class, 'getCouponValue']);
+    #get shipping cost by city_id,region_id,shipping company
+    Route::get('get-shipping-cost/{city_id}',[ShippingPriceController::class, 'getShippingCost']);
+    #get reviews
+    Route::get('get-reviews',[InfluencerEvaluationController::class,'index']);
     Route::group(['middleware' => 'auth:api','throttle:api'],function(){
         Route::group(['prefix' => 'auth'], function () {
             #logout api
@@ -86,5 +95,10 @@ Route::group(['prefix' => 'auth'], function () {
             Route::get('/{id}',[OrderController::class, 'show']);
             #cancel order
             Route::post('/cancel', [OrderController::class, 'cancel']);
+        });
+        #ratings route api
+        Route::group(['prefix' => 'ratings'],function(){
+            #add rate
+            Route::post('/', [RatingController::class, 'store']);
         });
     });
