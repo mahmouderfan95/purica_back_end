@@ -7,7 +7,7 @@ class CategoryRepository
     public function getCategories()
     {
         return $this->getModel()::query()
-            ->select('id','name','status')
+            ->select('id','name','status','image')
             ->Active()
             ->orderByDesc('id')
             ->get();
