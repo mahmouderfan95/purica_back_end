@@ -24,6 +24,7 @@ class Product extends Model
         'status',
         'category_id',
         'brand_id',
+        'discount_end_at'
     ];
     protected $appends = ['is_fav'];
     public function category() : BelongsTo

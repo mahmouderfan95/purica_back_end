@@ -29,6 +29,7 @@ class SingleProductResource extends JsonResource
             'slug' => $this->slug,
             'price' => $this->price,
             'price_after_discount' => $this->price_after_discount,
+            'discount_end_at' => $this->discount_end_at
         ];
     }
 }

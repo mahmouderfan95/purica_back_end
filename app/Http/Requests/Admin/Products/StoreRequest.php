@@ -31,7 +31,13 @@ class StoreRequest extends FormRequest
             'description.en' => ['required', 'string'],
             'description.ar' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
-            'price_after_discount' => ['nullable', 'numeric', 'lte:price'],
+            'price_after_discount' => ['nullable', 'numeric', 'lte:price','required_with:discount_end_at'],
+            'discount_end_at' => [
+                'nullable',
+                'required_with:price_after_discount',
+                'date',
+                'after:now',
+            ],
             'available_quantity' => ['required', 'integer', 'min:0'],
             'status' => ['required', Rule::in(['active', 'inactive'])],
             'category_id' => ['required', 'exists:categories,id'],
@@ -50,6 +56,16 @@ class StoreRequest extends FormRequest
             'variants.*.price' => ['required_with:variants', 'numeric', 'min:0'],
             'variants.*.available_quantity' => ['required_with:variants', 'integer', 'min:0'],
             'variants.*.selected_options' => ['required_with:variants', 'json'],
+            'discount_end_at'
+        ];
+    }
+    public function messages(): array
+    {
+        return [
+            'price_after_discount.lt' => 'سعر الخصم يجب أن يكون أقل من السعر الأصلي.',
+            'discount_end_at.after' => 'تاريخ انتهاء الخصم يجب أن يكون في المستقبل.',
+            'discount_end_at.required_with' => 'تاريخ انتهاء الخصم مطلوب عند إضافة سعر الخصم.',
+            'price_after_discount.required_with' => 'سعر الخصم مطلوب عند تحديد تاريخ انتهاء الخصم.',
         ];
     }
 }

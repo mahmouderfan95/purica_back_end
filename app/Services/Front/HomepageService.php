@@ -32,6 +32,7 @@ class HomepageService
     {
         try{
             $settings = $this->settingRepository->getSettings();
+            $dataSpecialOffer = $this->productRepository->getSpecialOfferProduct();
             $data = [];
             $data['sliders'] = SliderResource::collection($this->sliderRepository->getSliders());
             $data['mainCategories'] = CategoryResource::collection($this->categoryRepository->getMainCategories());
@@ -39,6 +40,9 @@ class HomepageService
             $data['products'] = SingleProductResource::collection($this->productRepository->getFeaturedProducts());
             $data['site_video'] =  $settings?->site_video;
             $data['offers_banners'] = HomeBannerResource::collection($this->homeBannerRepository->getOffersBanners());
+            $data['special_offer'] = $dataSpecialOffer ? SingleProductResource::make(
+                $this->productRepository->getSpecialOfferProduct()
+            ) : null;
             return $this->ApiSuccessResponse($data);
         }catch (\Exception $exception)
         {

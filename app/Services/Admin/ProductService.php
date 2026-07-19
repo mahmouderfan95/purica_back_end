@@ -50,6 +50,7 @@ class ProductService
                 'available_quantity' => $data['available_quantity'],
                 'category_id' => $data['category_id'],
                 'brand_id' => $data['brand_id'],
+                'discount_end_at' => $data['discount_end_at'],
             ]);
             if ($request->hasFile('attachments')) {
                 $uploads = $this->uploadAttachments('attachments', 'uploads/products/media');
@@ -134,6 +135,7 @@ class ProductService
                 'category_id' => $data['category_id'] ?? $product->category_id,
                 'brand_id' => $data['brand_id'] ?? $product->brand_id,
                 'image' => $data['image'] ?? $product->image,
+                'discount_end_at' => $data['discount_end_at'] ?? $product->discount_end_at,
             ];
             // Update the package
             $product->update($updateData);

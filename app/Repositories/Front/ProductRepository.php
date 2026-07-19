@@ -1,5 +1,6 @@
 <?php
 namespace App\Repositories\Front;
+use App\Enums\GeneralStatusEnum;
 use App\Models\Product;
 
 class ProductRepository
@@ -101,6 +102,16 @@ class ProductRepository
             ->paginate(PAGINATION_COUNT_ADMIN);
         $product->setRelation('similar_products', $similarProducts);
         return $product;
+    }
+    public function getSpecialOfferProduct()
+    {
+        return $this->getModel()::query()
+            ->where('status', GeneralStatusEnum::ACTIVE)
+            ->whereColumn('price_after_discount', '<', 'price')
+            ->whereNotNull('discount_end_at')
+            ->where('discount_end_at', '>', now())
+            ->latest()
+            ->first();
     }
     private function getModel() : Product
     {
