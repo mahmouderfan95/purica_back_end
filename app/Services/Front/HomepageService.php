@@ -2,11 +2,13 @@
 namespace App\Services\Front;
 use App\Http\Resources\Admin\Brands\BrandResource;
 use App\Http\Resources\Admin\Categories\CategoryResource;
+use App\Http\Resources\Admin\HomeBanners\HomeBannerResource;
 use App\Http\Resources\Admin\Products\ProductResource;
 use App\Http\Resources\Admin\Sliders\SliderResource;
 use App\Http\Resources\Front\Products\SingleProductResource;
 use App\Repositories\Front\BrandRepository;
 use App\Repositories\Front\CategoryRepository;
+use App\Repositories\Front\HomeBannerRepository;
 use App\Repositories\Front\ProductRepository;
 use App\Repositories\Front\SettingRepository;
 use App\Repositories\Front\SliderRepository;
@@ -23,6 +25,7 @@ class HomepageService
         public BrandRepository $brandRepository,
         public SettingRepository $settingRepository,
         public ProductRepository $productRepository,
+        public HomeBannerRepository $homeBannerRepository,
 
     ){}
     public function index() : JsonResponse
@@ -35,7 +38,7 @@ class HomepageService
             $data['mainBrands'] = BrandResource::collection($this->brandRepository->getMainBrands());
             $data['products'] = SingleProductResource::collection($this->productRepository->getFeaturedProducts());
             $data['site_video'] =  $settings?->site_video;
-            $data['bundles'] = [];
+            $data['offers_banners'] = HomeBannerResource::collection($this->homeBannerRepository->getOffersBanners());
             return $this->ApiSuccessResponse($data);
         }catch (\Exception $exception)
         {

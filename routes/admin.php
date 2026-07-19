@@ -18,6 +18,7 @@ use \App\Http\Controllers\Admin\ShippingPriceController;
 use \App\Http\Controllers\Admin\CouponController;
 use \App\Http\Controllers\Admin\OrderController;
 use \App\Http\Controllers\Admin\InfluencerEvaluationController;
+use \App\Http\Controllers\Admin\HomeBannerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -245,5 +246,17 @@ Route::group(['middleware' => ['auth:adminApi']], function () {
         Route::post('/{id}/update',[InfluencerEvaluationController::class,'update']);
         #delete
         Route::delete('/{id}/destroy',[InfluencerEvaluationController::class,'destroy']);
+    });
+    Route::group(['prefix' => 'home-banners'],function(){
+        #get all categories
+        Route::get('/',[HomeBannerController::class,'index']);
+        #store category
+        Route::post('/',[HomeBannerController::class,'store']);
+        #show category details
+        Route::get('/{id}',[HomeBannerController::class,'show']);
+        #update category route
+        Route::post('/{id}/update',[HomeBannerController::class,'update']);
+        #delete category
+        Route::delete('/{id}/delete',[HomeBannerController::class,'destroy']);
     });
 });
