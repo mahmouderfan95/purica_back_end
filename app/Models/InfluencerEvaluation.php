@@ -21,6 +21,6 @@ class InfluencerEvaluation extends Model
     }
     public function getImageUrlAttribute()
     {
-        return $this->image == null ? asset('images/default.jpg') :asset('storage/uploads/influencer_evaluation/' . $this->image) ;
+        return $this->image == null ? asset('images/default.jpg') :asset('storage/uploads/reviews/' . $this->image) ;
     }
 }

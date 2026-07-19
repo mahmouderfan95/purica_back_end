@@ -31,6 +31,7 @@ class ProductResource extends JsonResource
             'slug' => $this->slug,
             'price' => $this->price,
             'price_after_discount' => $this->price_after_discount,
+            'discount_end_at' => $this->discount_end_at,
             'available_quantity' => $this->available_quantity,
             'category' => CategoryResource::make($this->whenLoaded('category')),
             'brand' => BrandResource::make($this->whenLoaded('productType')),
