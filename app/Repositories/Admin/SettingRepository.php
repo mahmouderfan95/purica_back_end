@@ -9,7 +9,7 @@ class SettingRepository
         return $this->getModel()::query()
             ->select(['id','site_name','site_description','site_logo',
                 'site_phone','site_address',
-                'facebook','instagram','whatsapp','tiktok'])
+                'facebook','instagram','whatsapp','tiktok','site_video'])
             ->latest()
             ->first();
     }

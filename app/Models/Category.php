@@ -13,6 +13,7 @@ class Category extends Model
     protected $fillable = [
       'name',
       'image',
+      'banner_image',
       'status',
     ];
     public function scopeActive($query)
@@ -23,5 +24,9 @@ class Category extends Model
     public function getImageUrlAttribute()
     {
         return $this->image == null ? asset('images/default.jpg') :asset('storage/uploads/categories/' . $this->image) ;
+    }
+    public function getBannerImageUrlAttribute()
+    {
+        return $this->banner_image == null ? asset('images/default.jpg') :asset('storage/uploads/categories/banners/' . $this->banner_image) ;
     }
 }

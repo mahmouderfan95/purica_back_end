@@ -26,6 +26,7 @@ class StoreRequest extends FormRequest
             'name.en' => 'required|string',
             'name.ar' => 'required|string',
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'banner_image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
             'status' => 'required|string|in:active,inactive',
         ];
     }

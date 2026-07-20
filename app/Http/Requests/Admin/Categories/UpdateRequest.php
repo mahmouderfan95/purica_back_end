@@ -26,6 +26,7 @@ class UpdateRequest extends FormRequest
             'name.en' => 'sometimes|string',
             'name.ar' => 'sometimes|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'banner_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'status' => 'nullable|string|in:active,inactive',
         ];
     }

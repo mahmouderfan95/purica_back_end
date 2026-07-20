@@ -34,10 +34,14 @@ class CategoryService
             if ($request->hasFile('image')) {
                 $data['image'] = $this->save_file($request->file('image'),'categories'); // Store in 'storage/app/public/packages'
             }
+            if ($request->hasFile('banner_image')) {
+                $data['banner_image'] = $this->save_file($request->file('image'),'categories/banners'); // Store in 'storage/app/public/packages'
+            }
             // Create the package
             $category = $this->categoryRepository->create([
                 'name' => $data['name'],
                 'image' => $data['image'],
+                'banner_image' => $data['banner_image'],
                 'status' => 'active',
             ]);
 
@@ -82,9 +86,18 @@ class CategoryService
                 // Save the new image
                 $data['image'] = $this->save_file($request->file('image'), 'categories');
             }
+            if ($request->hasFile('banner_image')) {
+                // Delete the old image if it exists
+                if ($category->banner_image) {
+                    $this->remove_file('categories/banners', $category->banner_image);
+                }
+                // Save the new image
+                $data['banner_image'] = $this->save_file($request->file('banner_image'), 'categories/banners');
+            }
             $category->update([
                 'name' => $data['name'] ?? $category['name'],
                 'image' => $data['image'] ?? $category['image'],
+                'banner_image' => $data['banner_image'] ?? $category['banner_image'],
                 'status' => $data['status'] ?? $category['status'],
             ]);
             DB::commit();
@@ -105,6 +118,9 @@ class CategoryService
                 // Check if an image exists and delete it
                 if ($category->image) {
                     $this->remove_file('categories', $category->image);
+                }
+                if ($category->banner_image) {
+                    $this->remove_file('categories/banners', $category->banner_image);
                 }
                 // Delete the package
                 $category->delete();
