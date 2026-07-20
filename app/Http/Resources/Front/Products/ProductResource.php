@@ -6,6 +6,7 @@ use App\Http\Resources\Admin\Brands\BrandResource;
 use App\Http\Resources\Admin\Categories\CategoryResource;
 use App\Http\Resources\Admin\Products\ProductMediaResource;
 use App\Http\Resources\Admin\Products\ProductVariantResource;
+use App\Http\Resources\Front\Ratings\RatingResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -40,6 +41,7 @@ class ProductResource extends JsonResource
             'attributeOptions' => $this->whenLoaded('attributeOptions'),
             'variants' => ProductVariantResource::collection($this->whenLoaded('variants')),
             'media' => ProductMediaResource::collection($this->whenLoaded('media')),
+            'reviews' => RatingResource::collection($this->whenLoaded('ratings')),
         ];
     }
 }

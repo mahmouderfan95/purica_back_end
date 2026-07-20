@@ -90,7 +90,7 @@ class ProductRepository
     public function getModoeBySlug($slug)
     {
         $product = $this->getModel()::query()
-            ->with(['category','brand', 'attributeOptions', 'media', 'variants'])
+            ->with(['category','brand', 'attributeOptions', 'media', 'variants','ratings'])
             ->where('slug', $slug)->first();
         if(!$product){
             return false;
