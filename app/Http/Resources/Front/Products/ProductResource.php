@@ -28,6 +28,7 @@ class ProductResource extends JsonResource
                 'ar' => $this->getTranslation('description','ar'),
                 'en' => $this->getTranslation('description','en'),
             ],
+            'is_fav' => (bool) ($this->is_fav ?? false),
             'status' => $this->status,
             'image' => $this->imageUrl,
             'slug' => $this->slug,

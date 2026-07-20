@@ -54,7 +54,7 @@ Route::group(['prefix' => 'auth'], function () {
     });
     Route::prefix('favorites')->group(function () {
 
-        Route::get('/', [FavoriteController::class, 'index']);
+        Route::get('/', [FavoriteController::class, 'index'])->middleware('guest.token');
 
         Route::post('/', [FavoriteController::class, 'store'])->middleware('guest.token');
 

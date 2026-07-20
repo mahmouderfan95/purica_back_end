@@ -47,10 +47,10 @@ class Product extends Model
     {
         return $this->hasMany(ProductVariants::class, 'product_id');
     }
-//    public function ratings() :HasMany
-//    {
-//        return $this->hasMany(Rating::class,'product_id');
-//    }
+    public function ratings() :HasMany
+    {
+        return $this->hasMany(Rating::class,'product_id');
+    }
     public function favorites(): HasMany
     {
         return $this->hasMany(UserProductWhitelists::class, 'product_id');
@@ -65,10 +65,10 @@ class Product extends Model
 
         return $user->favorites()->where('product_id', $this->id)->exists();
     }
-//    public function averageRating(): float
-//    {
-//        return round($this->ratings()->avg('rating'), 1) ?? 0.0;
-//    }
+    public function averageRating(): float
+    {
+        return round($this->ratings()->avg('rating'), 1) ?? 0.0;
+    }
     public function scopeActive($query)
     {
         return $query->where('status', 'active');
