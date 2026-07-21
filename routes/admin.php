@@ -19,6 +19,9 @@ use \App\Http\Controllers\Admin\CouponController;
 use \App\Http\Controllers\Admin\OrderController;
 use \App\Http\Controllers\Admin\InfluencerEvaluationController;
 use \App\Http\Controllers\Admin\HomeBannerController;
+use \App\Http\Controllers\Admin\DashboardController;
+use \App\Http\Controllers\Admin\ReportController;
+use \App\Http\Controllers\Admin\RatingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +45,8 @@ Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
 });
 Route::group(['middleware' => ['auth:adminApi']], function () {
+    #statistics
+    Route::get('statistics ',[DashboardController::class,'statistics']);
     #logout
     Route::post('auth/logout', [AuthController::class, 'logout']);
     #categories
@@ -147,6 +152,30 @@ Route::group(['middleware' => ['auth:adminApi']], function () {
         Route::get('/',[SettingController::class,'index']);
         #update
         Route::post('update',[SettingController::class,'update']);
+    });
+    #reports
+    Route::group(['prefix' => 'reports'],function(){
+        Route::get('admins',[ReportController::class,'admins']);
+        #reports of products
+        Route::get('products',[ReportController::class,'products']);
+        #reports of users
+        Route::get('users',[ReportController::class,'users']);
+        #category product charts
+        Route::get('categories-product-charts',[ReportController::class,'categoriesProductCharts']);
+        #category sales ratio
+        Route::get('categories-sales-ratio',[ReportController::class,'categoriesSalesRatio']);
+        #users status reports
+        Route::get('users-classification-report',[ReportController::class,'usersStatusReport']);
+    });
+    Route::group(['prefix' => 'products-reviews'],function(){
+        #get all reviews
+        Route::get('/',[RatingController::class,'index']);
+        #add new city
+//        Route::post('/',[RatingController::class,'store']);
+        #update
+        Route::post('/{id}/update',[RatingController::class,'update']);
+        #delete city
+        Route::delete('/{id}/destroy',[RatingController::class,'destroy']);
     });
     #countries
     Route::group(['prefix' => 'countries'],function(){

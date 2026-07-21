@@ -27,7 +27,7 @@ class OrderRepository
     public function getCountOfCompleteOrders()
     {
         return $this->getModel()::query()
-            ->where('status',OrderStatusEnum::DELIVERED)
+            ->where('status',OrderStatusEnum::COMPLETED)
             ->count();
     }
     public function getCountOfCancelledOrders()
