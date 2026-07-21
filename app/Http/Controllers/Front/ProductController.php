@@ -20,4 +20,12 @@ class ProductController extends Controller
     {
         return $this->productService->show($slug);
     }
+    public function search(Request $request) : JsonResponse
+    {
+        return $this->productService->search($request);
+    }
+    public function getVariantPrice(Request $request) : JsonResponse
+    {
+        return $this->productService->getVariantPrice($request);
+    }
 }

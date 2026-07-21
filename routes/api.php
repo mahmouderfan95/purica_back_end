@@ -78,7 +78,14 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('get-shipping-cost/{city_id}',[ShippingPriceController::class, 'getShippingCost']);
     #get reviews
     Route::get('get-reviews',[InfluencerEvaluationController::class,'index']);
+    #get variant price
+    Route::get('get-variant-price/{product_id}/{sku}', [ProductController::class, 'getVariantPrice']);
+
+    #search product
+    Route::get('search/products',[ProductController::class,'search']);
+
     Route::group(['middleware' => 'auth:api','throttle:api'],function(){
+
         Route::group(['prefix' => 'auth'], function () {
             #logout api
             Route::post('logout',[AuthController::class, 'logout']);
